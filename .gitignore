@@ -3,5 +3,5 @@ build/*
 *.iml
 .gradle/
 
-gradle/
+gradle/wrapper/
 gradlew*
