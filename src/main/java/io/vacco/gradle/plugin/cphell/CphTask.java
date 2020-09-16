@@ -114,10 +114,12 @@ public class CphTask extends DefaultTask {
           boolean thisHasDupes = !dupes.isEmpty();
           if (thisHasDupes) {
             getLogger().info("configuration '{}' contains duplicate resource: {}", conf.getName(), resourcePath);
-            dupes.stream().sorted().forEach(source -> {
-              getLogger().info(" found within dependency: {}", source.getModuleVersion().getId());
-              findRoute(conf, source).stream().sorted()
-                  .forEach(route -> getLogger().info("  imported via: {}", route));
+            dupes.stream()
+                .sorted(Comparator.comparing(ra0 -> ra0.getId().getDisplayName()))
+                .forEach(source -> {
+                  getLogger().info(" found within dependency: {}", source.getModuleVersion().getId());
+                  findRoute(conf, source).stream().sorted()
+                      .forEach(route -> getLogger().info("  imported via: {}", route));
             });
           }
           if (thisHasDupes) { hadDupes[0] = true; }
