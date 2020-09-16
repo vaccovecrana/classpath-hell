@@ -87,7 +87,7 @@ public class CphTask extends DefaultTask {
           List<String> includedResources = resourcesInFile.stream().filter(res -> {
             boolean inc = ext.includeResource.test(res);
             if (getLogger().isDebugEnabled()) {
-              getLogger().debug(" {} resource <{}>", inc ? "including" : "excluding", res);
+              getLogger().debug("{} resource <{}>", inc ? "including" : "excluding", res);
             }
             return inc;
           }).collect(Collectors.toList());

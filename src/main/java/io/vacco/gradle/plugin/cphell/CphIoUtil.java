@@ -64,8 +64,8 @@ public class CphIoUtil {
         Collection<String> resourcesInJar = getResources(fileOrDir, log);
         files.addAll(resourcesInJar);
       }
-    } else {
-      log.warn("classpathHell: skipping location as is neither a file nor a directory: {}", location);
+    } else if (log.isDebugEnabled()) {
+      log.debug("classpathHell: skipping location as is neither a file nor a directory: {}", location);
     }
     return files;
   }
