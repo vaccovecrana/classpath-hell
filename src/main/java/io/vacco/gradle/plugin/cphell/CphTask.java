@@ -14,13 +14,7 @@ import java.util.stream.Collectors;
 public class CphTask extends DefaultTask {
 
   public List<String> commonResourceExclusions() { // convenience common defaults that are not very interesting
-    return new ArrayList<>(
-        Arrays.asList(
-            "^rootdoc.txt\\$", "^about.html\\$",
-            "^NOTICE\\$", "^LICENSE\\$", "^LICENSE.*.txt\\$",
-            "^META-INF/.*", ".*/\\$", ".*com/sun/.*", ".*javax/annotation/.*"
-        )
-    );
+    return CphTaskUtil.commonExcludes;
   }
 
   public List<Configuration> configurationsToScan = new ArrayList<>(); // optional list of configurations to limit the scan to

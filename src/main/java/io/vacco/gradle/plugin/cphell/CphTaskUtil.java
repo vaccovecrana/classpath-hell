@@ -2,10 +2,18 @@ package io.vacco.gradle.plugin.cphell;
 
 import org.gradle.api.artifacts.ResolvedArtifact;
 
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class CphTaskUtil {
+
+  public static final List<String> commonExcludes = new ArrayList<>(
+      Arrays.asList(
+          "^rootdoc.txt\\$", "^about.html\\$",
+          "^NOTICE\\$", "^LICENSE\\$", "^LICENSE.*.txt\\$",
+          "^META-INF/.*", ".*/\\$", ".*com/sun/.*", ".*javax/annotation/.*"
+      )
+  );
 
   public static Predicate<String> defaultResourceInclude(List<String> excludedPatterns) {
     return f -> {
