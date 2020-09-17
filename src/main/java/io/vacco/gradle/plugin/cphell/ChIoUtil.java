@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.security.*;
 import java.util.zip.*;
 
-public class CphIoUtil {
+public class ChIoUtil {
 
   public static String getHashOfResource(File f, String resourcePath) {
     try {

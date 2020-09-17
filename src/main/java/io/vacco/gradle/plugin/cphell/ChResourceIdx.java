@@ -7,11 +7,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.zip.*;
 
-public class CphResourceIdx extends TreeMap<String, List<File>> {
+public class ChResourceIdx extends TreeMap<String, List<File>> {
 
   public boolean contentEquals(String resource, List<File> sources) {
     return sources.stream()
-        .map(src -> CphIoUtil.getHashOfResource(src, resource))
+        .map(src -> ChIoUtil.getHashOfResource(src, resource))
         .collect(Collectors.toSet()).size() == 1;
   }
 
