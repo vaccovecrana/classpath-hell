@@ -50,19 +50,19 @@ public class CphTask extends DefaultTask {
     List<Configuration> configurations = configurationsToScan.isEmpty() ? new ArrayList<>(getProject().getConfigurations()) : configurationsToScan;
     List<Configuration> resolvedConfs = configurations.stream().filter(Configuration::isCanBeResolved).collect(Collectors.toList());
 
+    log.info("artifactExclusions: {}", artifactExclusions);
+    log.info("resourceExclusions: {}", resourceExclusions);
+
     for (Configuration conf : resolvedConfs) {
       log.info("classpathHell: checking configuration : '{}'", conf.getName());
-
       CphResourceIdx idx = new CphResourceIdx();
 
       for (ResolvedArtifact art : conf.getResolvedConfiguration().getResolvedArtifacts()) {
         if (includeArtifact.test(art)) {
-          if (log.isDebugEnabled()) {
-            log.debug("including artifact <{}>", art.getModuleVersion().getId());
-          }
+          log.info("including artifact <{}>", art.getModuleVersion().getId());
           idx.add(art.getFile());
-        } else if (log.isDebugEnabled()) {
-          log.debug("excluding artifact <{}>", art.getModuleVersion().getId());
+        } else {
+          log.info("excluding artifact <{}>", art.getModuleVersion().getId());
         }
       }
 
