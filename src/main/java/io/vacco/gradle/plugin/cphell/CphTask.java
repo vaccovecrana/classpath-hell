@@ -24,9 +24,9 @@ public class CphTask extends DefaultTask {
   public List<String> resourceExclusions = new ArrayList<>(); // override to provide an alternative list of resources to exclude from the check
 
   // override to provide an alternative inclusion strategy to the default (exclude artifacts from black list)
-  public Predicate<ResolvedArtifact> includeArtifact = CphTaskUtil.defaultArtifactInclude(artifactExclusions);
+  public Predicate<ResolvedArtifact> includeArtifact = null;
   // override to provide an alternative inclusion strategy to the default (exclude resources from black list)
-  public Predicate<String> includeResource = CphTaskUtil.defaultResourceInclude(resourceExclusions);
+  public Predicate<String> includeResource = null;
 
   public static void reportDuplicates(String configName, List<Map.Entry<String, List<File>>> dupes, Logger log) {
     dupes.forEach(e -> {
@@ -44,8 +44,15 @@ public class CphTask extends DefaultTask {
     List<Configuration> configurations = configurationsToScan.isEmpty() ? new ArrayList<>(getProject().getConfigurations()) : configurationsToScan;
     List<Configuration> resolvedConfs = configurations.stream().filter(Configuration::isCanBeResolved).collect(Collectors.toList());
 
-    log.info("artifactExclusions: {}", artifactExclusions);
-    log.info("resourceExclusions: {}", resourceExclusions);
+    if (includeArtifact == null) {
+      includeArtifact = CphTaskUtil.defaultArtifactInclude(artifactExclusions);
+      log.info("artifactExclusions: {}", artifactExclusions);
+    }
+
+    if (includeResource == null) {
+      includeResource = CphTaskUtil.defaultResourceInclude(resourceExclusions);
+      log.info("resourceExclusions: {}", resourceExclusions);
+    }
 
     for (Configuration conf : resolvedConfs) {
       log.info("checking configuration : '{}'", conf.getName());
