@@ -7,9 +7,31 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class CphTask extends DefaultTask {
+
+  public List<String> commonResourceExclusions() { // convenience common defaults that are not very interesting
+    return new ArrayList<>(
+        Arrays.asList(
+            "^rootdoc.txt\\$", "^about.html\\$",
+            "^NOTICE\\$", "^LICENSE\\$", "^LICENSE.*.txt\\$",
+            "^META-INF/.*", ".*/\\$", ".*com/sun/.*", ".*javax/annotation/.*"
+        )
+    );
+  }
+
+  public List<Configuration> configurationsToScan = new ArrayList<>(); // optional list of configurations to limit the scan to
+
+  public boolean suppressExactDupes = false; // instances of a resource that have the same hash will be considered equivalent and not be reported
+  public List<String> artifactExclusions = new ArrayList<>(); // override to supply a list of artifacts to exclude from the check (assuming includeArtifact has not been overridden)
+  public List<String> resourceExclusions = new ArrayList<>(); // override to provide an alternative list of resources to exclude from the check
+
+  // override to provide an alternative inclusion strategy to the default (exclude artifacts from black list)
+  public Predicate<ResolvedArtifact> includeArtifact = CphTaskUtil.defaultArtifactInclude(artifactExclusions);
+  // override to provide an alternative inclusion strategy to the default (exclude resources from black list)
+  public Predicate<String> includeResource = CphTaskUtil.defaultResourceInclude(resourceExclusions);
 
   public static void reportDuplicates(String configName, List<Map.Entry<String, List<File>>> dupes, Logger log) {
     dupes.forEach(e -> {
@@ -22,8 +44,7 @@ public class CphTask extends DefaultTask {
   @TaskAction public void action() {
 
     boolean hadDupes = false;
-    CphPluginExtension ext = Objects.requireNonNull(getProject().getExtensions().findByType(CphPluginExtension.class));
-    List<Configuration> configurations = ext.configurationsToScan.isEmpty() ? new ArrayList<>(getProject().getConfigurations()) : ext.configurationsToScan;
+    List<Configuration> configurations = configurationsToScan.isEmpty() ? new ArrayList<>(getProject().getConfigurations()) : configurationsToScan;
     List<Configuration> resolvedConfs = configurations.stream().filter(Configuration::isCanBeResolved).collect(Collectors.toList());
 
     for (Configuration conf : resolvedConfs) {
@@ -32,7 +53,7 @@ public class CphTask extends DefaultTask {
       CphResourceIdx idx = new CphResourceIdx();
 
       for (ResolvedArtifact art : conf.getResolvedConfiguration().getResolvedArtifacts()) {
-        if (ext.includeArtifact.test(art)) {
+        if (includeArtifact.test(art)) {
           if (getLogger().isDebugEnabled()) {
             getLogger().debug("including artifact <{}>", art.getModuleVersion().getId());
           }
@@ -42,7 +63,7 @@ public class CphTask extends DefaultTask {
         }
       }
 
-      List<Map.Entry<String, List<File>>> dupes = idx.getDuplicates(ext.suppressExactDupes, ext.includeResource);
+      List<Map.Entry<String, List<File>>> dupes = idx.getDuplicates(suppressExactDupes, includeResource);
       reportDuplicates(conf.getName(), dupes, getLogger());
 
       if (!dupes.isEmpty()) { hadDupes = true; }

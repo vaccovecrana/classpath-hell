@@ -2,8 +2,7 @@ package io.vacco.gradle.plugin.cphell;
 
 import j8spec.junit.J8SpecRunner;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
 import java.io.File;
 import java.util.*;
@@ -22,7 +21,7 @@ public class CphSpec {
       File jar1 = new File("/home/jjzazuet/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar");
 
       CphResourceIdx idx = new CphResourceIdx();
-      Predicate<String> pred = new CphPluginExtension().includeResource;
+      Predicate<String> pred = CphTaskUtil.defaultResourceInclude(new ArrayList<>());
 
       idx.add(jar0);
       idx.add(jar1);
