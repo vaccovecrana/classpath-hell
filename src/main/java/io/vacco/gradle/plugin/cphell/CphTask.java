@@ -48,7 +48,7 @@ public class CphTask extends DefaultTask {
     log.info("resourceExclusions: {}", resourceExclusions);
 
     for (Configuration conf : resolvedConfs) {
-      log.info("classpathHell: checking configuration : '{}'", conf.getName());
+      log.info("checking configuration : '{}'", conf.getName());
       CphResourceIdx idx = new CphResourceIdx();
 
       for (ResolvedArtifact art : conf.getResolvedConfiguration().getResolvedArtifacts()) {
