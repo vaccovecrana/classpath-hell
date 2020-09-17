@@ -2,6 +2,7 @@ package io.vacco.gradle.plugin.cphell;
 
 import org.gradle.api.*;
 import org.gradle.api.artifacts.*;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 
@@ -43,28 +44,30 @@ public class CphTask extends DefaultTask {
 
   @TaskAction public void action() {
 
+    org.gradle.api.logging.Logger log = Logging.getLogger(CphTask.class);
+
     boolean hadDupes = false;
     List<Configuration> configurations = configurationsToScan.isEmpty() ? new ArrayList<>(getProject().getConfigurations()) : configurationsToScan;
     List<Configuration> resolvedConfs = configurations.stream().filter(Configuration::isCanBeResolved).collect(Collectors.toList());
 
     for (Configuration conf : resolvedConfs) {
-      getLogger().info("classpathHell: checking configuration : '{}'", conf.getName());
+      log.info("classpathHell: checking configuration : '{}'", conf.getName());
 
       CphResourceIdx idx = new CphResourceIdx();
 
       for (ResolvedArtifact art : conf.getResolvedConfiguration().getResolvedArtifacts()) {
         if (includeArtifact.test(art)) {
-          if (getLogger().isDebugEnabled()) {
-            getLogger().debug("including artifact <{}>", art.getModuleVersion().getId());
+          if (log.isDebugEnabled()) {
+            log.debug("including artifact <{}>", art.getModuleVersion().getId());
           }
           idx.add(art.getFile());
-        } else if (getLogger().isDebugEnabled()) {
-          getLogger().debug("excluding artifact <{}>", art.getModuleVersion().getId());
+        } else if (log.isDebugEnabled()) {
+          log.debug("excluding artifact <{}>", art.getModuleVersion().getId());
         }
       }
 
       List<Map.Entry<String, List<File>>> dupes = idx.getDuplicates(suppressExactDupes, includeResource);
-      reportDuplicates(conf.getName(), dupes, getLogger());
+      reportDuplicates(conf.getName(), dupes, log);
 
       if (!dupes.isEmpty()) { hadDupes = true; }
     }
