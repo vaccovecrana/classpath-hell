@@ -14,6 +14,9 @@ configure<JavaPluginExtension> {
 }
 
 val api by configurations
+val testRuntime by configurations
 dependencies {
   api(gradleApi())
+  testRuntime("org.hamcrest:hamcrest-all:1.3")
+  testRuntime("org.hamcrest:hamcrest-core:1.3")
 }

@@ -20,9 +20,9 @@ public class CphPluginExtension {
   public List<String> resourceExclusions = new ArrayList<>(); // override to provide an alternative list of resources to exclude from the check
   public boolean suppressExactDupes = false; // instances of a resource that have the same hash will be considered equivalent and not be reported
 
-  // override to provide an alternative inclusion strategy to the default (exclude artifacts according to a black list)
+  // override to provide an alternative inclusion strategy to the default (exclude artifacts from black list)
   public Predicate<ResolvedArtifact> includeArtifact = f -> excludeArtifactPaths(artifactExclusions, f);
-  // override to provide an alternative inclusion strategy to the default
+  // override to provide an alternative inclusion strategy to the default (exclude resources from black list)
   public Predicate<String> includeResource = f -> excludeMatches(resourceExclusions, f);
 
   protected static boolean excludeArtifactPaths(List<String> excludedPatterns, ResolvedArtifact f) {
