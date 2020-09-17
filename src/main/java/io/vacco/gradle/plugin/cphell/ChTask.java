@@ -26,18 +26,18 @@ public class ChTask extends DefaultTask {
     ChPluginExtension ext = getProject().getExtensions().getByType(ChPluginExtension.class);
 
     boolean hadDupes = false;
-    List<Configuration> configurations = ext.configurationsToScan.isEmpty() ? new ArrayList<>(getProject().getConfigurations()) : ext.configurationsToScan;
+    List<Configuration> configurations = ext.getConfigurationsToScan().isEmpty() ? new ArrayList<>(getProject().getConfigurations()) : ext.getConfigurationsToScan();
     List<Configuration> resolvedConfs = configurations.stream().filter(Configuration::isCanBeResolved).collect(Collectors.toList());
 
-    if (!ext.artifactExclusions.isEmpty()) { log.info("artifactExclusions: {}", ext.artifactExclusions); }
-    if (!ext.resourceExclusions.isEmpty()) { log.info("resourceExclusions: {}", ext.resourceExclusions); }
+    if (!ext.getArtifactExclusions().isEmpty()) { log.info("artifactExclusions: {}", ext.getArtifactExclusions()); }
+    if (!ext.getResourceExclusions().isEmpty()) { log.info("resourceExclusions: {}", ext.getResourceExclusions()); }
 
     for (Configuration conf : resolvedConfs) {
       log.info("checking configuration : '{}'", conf.getName());
       ChResourceIdx idx = new ChResourceIdx();
 
       for (ResolvedArtifact art : conf.getResolvedConfiguration().getResolvedArtifacts()) {
-        if (ext.includeArtifact.test(art)) {
+        if (ext.getIncludeArtifact().test(art)) {
           log.info("including artifact <{}>", art.getModuleVersion().getId());
           idx.add(art.getFile());
         } else {
@@ -45,7 +45,7 @@ public class ChTask extends DefaultTask {
         }
       }
 
-      List<Map.Entry<String, List<File>>> dupes = idx.getDuplicates(ext.suppressExactDupes, ext.includeResource);
+      List<Map.Entry<String, List<File>>> dupes = idx.getDuplicates(ext.isSuppressExactDupes(), ext.getIncludeResource());
       reportDuplicates(conf.getName(), dupes, log);
 
       if (!dupes.isEmpty()) { hadDupes = true; }

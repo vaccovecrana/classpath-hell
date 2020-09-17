@@ -20,16 +20,16 @@ public class CphSpec {
       File jar1 = new File("/home/jjzazuet/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar");
 
       ChResourceIdx idx = new ChResourceIdx();
-      ChPluginExtension ext = new ChPluginExtension();
+      ChPluginExtension ext = new ChDefaultPluginExtension();
 
       idx.add(jar0);
       idx.add(jar1);
 
-      List<Map.Entry<String, List<File>>> allDupes = idx.getDuplicates(false, ext.includeResource);
-      List<Map.Entry<String, List<File>>> nonExactDupes = idx.getDuplicates(true, ext.includeResource);
+      List<Map.Entry<String, List<File>>> allDupes = idx.getDuplicates(false, ext.getIncludeResource());
+      List<Map.Entry<String, List<File>>> nonExactDupes = idx.getDuplicates(true, ext.getIncludeResource());
 
-      ext.resourceExclusions = ext.commonResourceExclusions();
-      List<Map.Entry<String, List<File>>> nonExactDupesWithExclusions = idx.getDuplicates(true, ext.includeResource);
+      ext.setResourceExclusions(ext.commonResourceExclusions());
+      List<Map.Entry<String, List<File>>> nonExactDupesWithExclusions = idx.getDuplicates(true, ext.getIncludeResource());
 
       ChTask.reportDuplicates("allDupes", allDupes, log);
       log.warn("{}", allDupes.size());
