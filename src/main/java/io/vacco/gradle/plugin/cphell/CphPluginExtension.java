@@ -8,10 +8,12 @@ import java.util.function.Predicate;
 public class CphPluginExtension {
 
   public static List<String> commonResourceExclusions() { // convenience common defaults that are not very interesting
-    return Arrays.asList(
-        "^rootdoc.txt\\$", "^about.html\\$",
-        "^NOTICE\\$", "^LICENSE\\$", "^LICENSE.*.txt\\$",
-        "^META-INF/.*", ".*/\\$", ".*com/sun/.*", ".*javax/annotation/.*"
+    return new ArrayList<>(
+        Arrays.asList(
+            "^rootdoc.txt\\$", "^about.html\\$",
+            "^NOTICE\\$", "^LICENSE\\$", "^LICENSE.*.txt\\$",
+            "^META-INF/.*", ".*/\\$", ".*com/sun/.*", ".*javax/annotation/.*"
+        )
     );
   }
 
