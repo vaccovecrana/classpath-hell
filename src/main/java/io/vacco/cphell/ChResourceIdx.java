@@ -1,4 +1,4 @@
-package io.vacco.gradle.plugin.cphell;
+package io.vacco.cphell;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package io.vacco.gradle.plugin.cphell;
+package io.vacco.cphell;
 
 import j8spec.junit.J8SpecRunner;
 import org.junit.runner.RunWith;

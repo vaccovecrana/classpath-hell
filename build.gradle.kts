@@ -1,9 +1,9 @@
+plugins { `java-gradle-plugin`; jacoco; `maven-publish` }
+
 repositories { jcenter() }
 
-plugins { `java-library`; jacoco; `maven-publish` }
-
 group = "io.vacco"
-version = "1.6.0"
+version = "1.7.0"
 
 dependencies {
   api(gradleApi())
@@ -22,29 +22,18 @@ configure<JavaPluginExtension> {
 tasks.withType<JavaCompile> { options.compilerArgs.add("-Xlint:all") }
 tasks.withType<Test> { this.testLogging { this.showStandardStreams = true } }
 
-val tokenFile = File(System.getProperty("user.home"), ".vaccoToken").readText()
-val libraryDesc: String by project
-val licenseName: String by project
-val licenseUrl: String by project
-val gitUrl: String by project
-val siteUrl: String by project
-
-configure<PublishingExtension> {
-  publications {
-    create<MavenPublication>("vaccoOss") {
-      from(components["java"])
-      pom {
-        name.set(project.name)
-        description.set(libraryDesc)
-        url.set(siteUrl)
-        licenses { license { name.set(licenseName); url.set(licenseUrl) } }
-        developers {
-          developer { id.set("vacco"); name.set("Vaccove Crana, LLC."); email.set("humans@vacco.io") }
-        }
-        scm { connection.set(gitUrl); developerConnection.set(gitUrl); url.set(siteUrl) }
-      }
+gradlePlugin {
+  plugins {
+    create("simplePlugin") {
+      id = "io.vacco.classpath-hell-gradle-plugin"
+      implementationClass = "io.vacco.cphell.ChPlugin"
     }
   }
+}
+
+val tokenFile = File(System.getProperty("user.home"), ".vaccoToken").readText()
+
+configure<PublishingExtension> {
   repositories {
     maven {
       name = "VaccoOss"

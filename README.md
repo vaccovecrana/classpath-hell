@@ -1,5 +1,7 @@
 # classpathHell - Classpath Mayhem Detector
 
+Statically types implementation of [portingle/classpathHell](https://github.com/portingle/classpathHell)
+
 It's far too easy to end up with multiple copies of a class or resource on your classpath leading to
 runtime errors that, due to classpath ordering instability, might not show up until late in your release cycle,
 or possibly even production. 
@@ -22,6 +24,6 @@ classpathHell {
 ./gradlew checkClasspath
 ```
 
-```
-groovy build.dependsOn(['checkClasspath'])
+```groovy
+build.dependsOn(["checkClasspath"])
 ```

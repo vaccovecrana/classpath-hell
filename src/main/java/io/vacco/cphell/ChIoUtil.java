@@ -1,4 +1,4 @@
-package io.vacco.gradle.plugin.cphell;
+package io.vacco.cphell;
 
 import java.io.*;
 import java.math.BigInteger;
