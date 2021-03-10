@@ -1,9 +1,9 @@
-plugins { `java-gradle-plugin`; jacoco; `maven-publish` }
+plugins { `java-library`; jacoco; `maven-publish`; signing }
 
-repositories { jcenter() }
+repositories { mavenCentral() }
 
 group = "io.vacco"
-version = "1.7.0"
+version = "1.8.0"
 
 dependencies {
   api(gradleApi())
@@ -22,26 +22,56 @@ configure<JavaPluginExtension> {
 tasks.withType<JavaCompile> { options.compilerArgs.add("-Xlint:all") }
 tasks.withType<Test> { this.testLogging { this.showStandardStreams = true } }
 
-gradlePlugin {
-  plugins {
-    create("simplePlugin") {
-      id = "io.vacco.classpath-hell-gradle-plugin"
-      implementationClass = "io.vacco.cphell.ChPlugin"
+publishing {
+  publications {
+    create<MavenPublication>("mavenJava") {
+      from(components["java"])
+      versionMapping {
+        usage("java-api") {
+          fromResolutionOf("runtimeClasspath")
+        }
+        usage("java-runtime") {
+          fromResolutionResult()
+        }
+      }
+      pom {
+        name.set("Classpath Hell Gradle Plugin")
+        description.set("Gradle plugin, breaks the build on class path collisions")
+        url.set("https://github.com/vaccovecrana/classpath-hell-gradle-plugin")
+        licenses {
+          license {
+            name.set("MIT License")
+            url.set("https://github.com/vaccovecrana/classpath-hell-gradle-plugin/blob/master/LICENSE")
+          }
+        }
+        developers {
+          developer {
+            id.set("vacco")
+            name.set("Vaccove Crana, LLC.")
+            email.set("humans@vacco.io")
+          }
+        }
+        scm {
+          connection.set("https://github.com/vaccovecrana/classpath-hell-gradle-plugin.git")
+          developerConnection.set("https://github.com/vaccovecrana/classpath-hell-gradle-plugin.git")
+          url.set("https://github.com/vaccovecrana/classpath-hell-gradle-plugin.git")
+        }
+      }
+    }
+  }
+  repositories {
+    maven {
+      name = "SonatypeOSS"
+      setUrl("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+      credentials {
+        username = System.getenv("SONATYPE_USER")
+        password = System.getenv("SONATYPE_PASSWORD")
+      }
     }
   }
 }
 
-val tokenFile = File(System.getProperty("user.home"), ".vaccoToken").readText()
-
-configure<PublishingExtension> {
-  repositories {
-    maven {
-      name = "VaccoOss"
-      setUrl("https://api.bintray.com/maven/vaccovecrana/vacco-oss/${project.name}")
-      credentials {
-        username = tokenFile.split(":")[0].trim()
-        password = tokenFile.split(":")[1].trim()
-      }
-    }
-  }
+signing {
+  sign(publishing.publications["mavenJava"])
+  useInMemoryPgpKeys(System.getenv("MAVEN_SIGNING_PRV"), "")
 }
