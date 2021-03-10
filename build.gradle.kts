@@ -26,14 +26,6 @@ publishing {
   publications {
     create<MavenPublication>("mavenJava") {
       from(components["java"])
-      versionMapping {
-        usage("java-api") {
-          fromResolutionOf("runtimeClasspath")
-        }
-        usage("java-runtime") {
-          fromResolutionResult()
-        }
-      }
       pom {
         name.set("Classpath Hell Gradle Plugin")
         description.set("Gradle plugin, breaks the build on class path collisions")
